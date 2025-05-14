@@ -145,3 +145,84 @@ SignalManager:
 - **RPNOp**
 Enum of binary operations: ADD, SUBTRACT, MULTIPLY, DIVIDE.
 
+---
+
+## 4. Usage Flow / Examples
+Full Pipeline
+java
+Kopieren
+Bearbeiten
+SignalProvider gen = new SignalGenerator();
+SignalStack stack   = new SignalStack();
+DatabaseManager db  = new DatabaseManager("jdbc:mariadb://host/db", "user", "pass");
+
+SignalManager mgr = new SignalManager(
+  gen, stack, db,
+  /* doStats */    true,
+  /* doFeatures */ true,
+  /* doNN */       false
+);
+
+mgr.runPipeline();
+mgr.showStack();
+Ad-hoc RPN Operations
+java
+Kopieren
+Bearbeiten
+mgr.addSignal(gen.getSignal());
+mgr.addSignal(gen.getSignal());
+mgr.operateRPN(RPNOp.ADD, LengthMode.PAD_WITH_ZEROS);
+mgr.normalizeLastSignal();
+mgr.saveLastSignal();
+---
+
+## 5. How to Compile and Test
+Requirements
+
+Java 17+
+
+Maven or Gradle
+
+Dependencies in pom.xml: JUnit 5, Apache Commons-Math3, XChart
+
+Build & Compile
+
+bash
+Kopieren
+Bearbeiten
+mvn clean compile
+Run Tests
+
+bash
+Kopieren
+Bearbeiten
+mvn test
+Package JAR
+
+bash
+Kopieren
+Bearbeiten
+mvn package
+# target/MerLabSignalStudio-1.0.jar
+---
+
+## 6. Extension & Customization
+New RPN operations
+
+Add enum in RPNOp or implement RPNOperation interface.
+
+Write logic in SignalProcessor or a new Operation class.
+
+Update SignalManager.operateRPN() or use a generic RPNEngine.
+
+Custom generators
+Extend AbstractSignalGenerator for new synthetic or data-driven sources.
+
+Machine Learning
+– Inference: wrap models in NeuralNetworkProcessor.
+– Training: separate MerLabModelTrainer project reading processed signals.
+
+Persistence
+Swap out or extend DatabaseManager for other SQL dialects or NoSQL backends.
+
+With this structure and guidance, MerLabSignalStudio can be tailored to any time-series or tabular data pipeline, from DSP prototyping to full AI analytics services.
