@@ -253,3 +253,247 @@ Extend AbstractSignalGenerator for new synthetic or data-driven sources.
 Swap out or extend DatabaseManager for other SQL dialects or NoSQL backends.
 
 With this structure and guidance, MerLabSignalStudio can be tailored to any time-series or tabular data pipeline, from DSP prototyping to full AI analytics services.
+
+---
+
+## 7. Class Diagram 
+```plaintext
+plaintext
+
+MerLabSignalStudio (com.merlab.signals)
+├── «interface» SignalProvider
+│     + getSignal(): Signal
+│
+├── «abstract» AbstractSignalGenerator implements SignalProvider
+│     – size: int
+│     – seed: Long
+│     + getSignal(): Signal      (abstract)
+│
+├── SignalGenerator implements SignalProvider
+│     + getSignal(): Signal
+│
+├── CustomSignalGenerator extends AbstractSignalGenerator
+│     + getSignal(): Signal
+│
+├── DistributionGenerator extends AbstractSignalGenerator
+│     + getSignal(): Signal
+│
+├── Signal
+│     – values: List<Double>
+│     + getValues(): List<Double>
+│     + setValues(List<Double>)
+│     + println(): void
+│
+├── SignalStack
+│     – stack: LinkedList<Signal>
+│     + push(Signal)
+│     + pop(): Signal
+│     + peek(): Signal
+│     + peekSecond(): Signal
+│     + size(): int
+│
+├── SignalProcessor
+│     + addSignals(List<Double>,List<Double>,LengthMode): List<Double>
+│     + subtractSignals(…)
+│     + multiplySignals(…)
+│     + divideSignals(…)
+│     + validateAndAlign(…)
+│     … (decimate, interpolate, normalizeTo, derivative, integrate, FFT, etc.)
+│
+├── StatisticalProcessor
+│     + mean(List<Double>): double
+│     + variance(List<Double>): double
+│     + median(…)
+│     + skewness(…)
+│     + kurtosis(…)
+│     + movingAverage(…)
+│     + gaussianSmoothing(…)
+│     + autocorrelation(…)
+│     + … (44+ methods)
+│
+├── FeatureExtractor
+│     + extractFeatures(Signal): Signal
+│
+├── NeuralNetworkProcessor
+│     + predict(Signal): Signal
+│
+├── NeuralNetworkManager
+│     + runInference(): void
+│
+├── DatabaseLoader
+│     + loadSignal(...): Signal
+│
+├── DatabaseManager
+│     + saveSignal(Signal): void
+│
+├── SignalPlotter
+│     + plotSignal(String, Signal): void
+│
+├── Complex
+│     – re: double
+│     – im: double
+│     + plus(Complex): Complex
+│     + minus(Complex): Complex
+│     + times(Complex): Complex
+│     + exp(theta): Complex
+│
+├── SignalManager
+│     – provider: SignalProvider
+│     – signalStack: SignalStack
+│     – databaseManager: DatabaseManager
+│     – doStats, doFeatures, doNN: boolean
+│     + runPipeline(): void
+│     + operateRPN(RPNOp, LengthMode): void
+│     + normalizeLastSignal(): void
+│     + statsLastSignal(): void
+│     + featuresLastSignal(): void
+│     + nnLastSignal(): void
+│     + saveLastSignal(): void
+│     + showStack(): void
+│     + addSignal(Signal): void
+│     + getLastSignal(): Signal
+│
+└── «enum» RPNOp
+      ADD, SUBTRACT, MULTIPLY, DIVIDE
+
+module-info.java
+```
+
+---
+
+## 8. Project Flow Diagram (Classes + Pipeline) 
+```plaintext
+plaintext
+
+                                    +----------------------+
+                                    |      Main.java       |
+                                    +----------------------+
+                                              |
+                                              v
+                                    +----------------------+
+                                    |   SignalManager      |
+                                    +----------------------+
+                                    |– provider: SignalProvider
+                                    |– signalStack: SignalStack
+                                    |– databaseManager: DatabaseManager
+                                    |– doStats, doFeatures, doNN: boolean
+                                    +----------------------+
+                                              |
+              ┌───────────────────────────────┼───────────────────────────────┐
+              │                               │                               │
+              v                               v                               v
+   1) RAW SIGNAL LOADING           2) BASIC PROCESSING               RPN OPERATIONS
+   ──────────────────────         ──────────────────────           ──────────────────
+   provider.getSignal()            SignalProcessor.process(...)       mgr.addSignal(A)
+           │                             │                             mgr.addSignal(B)
+           v                             v                             mgr.operateRPN(ADD,mode)
+   Signal raw                         Signal processed                  │
+           │                             │                             result ← stack.peek()
+           v                             v                             stack.push(result)
+   signalStack.push(raw)         signalStack.push(processed)                │
+   SignalPlotter.plotSignal(      SignalPlotter.plotSignal(             …etc.
+     "Raw", raw)                     "Processed", processed)
+
+                                              │
+                                              v
+                          3) OPTIONAL STATISTICS (if doStats=true)
+                          ────────────────────────────────────────────
+                          StatisticalProcessor.extractStats(processed)
+                                              │
+                                              v
+                                   signalStack.push(stats)
+                                   SignalPlotter.plotSignal(
+                                     "Stats", stats)
+
+                                              │
+                                              v
+                        4) OPTIONAL FEATURE EXTRACTION (if doFeatures=true)
+                        ────────────────────────────────────────────
+                        FeatureExtractor.extractFeatures(latest)
+                                              │
+                                              v
+                                    signalStack.push(features)
+                                    SignalPlotter.plotSignal(
+                                      "Features", features)
+
+                                              │
+                                              v
+                         5) OPTIONAL NEURAL NETWORK (if doNN=true)
+                         ────────────────────────────────────────────
+                         NeuralNetworkProcessor.predict(latest)
+                                              │
+                                              v
+                                    signalStack.push(nnResult)
+                                    SignalPlotter.plotSignal(
+                                      "NN Output", nnResult)
+
+                                              │
+                                              v
+                          6) PERSISTENCE & FINISH
+                          ────────────────────────
+                          final = signalStack.peek()
+                          databaseManager.saveSignal(final)
+
+```
+
+---
+
+## 9. Generic Pipeline Flow Diagram
+```plaintext
+plaintext
+
+                        ┌──────────────────────────┐
+                        │   Start of pipeline      │
+                        └──────────────────────────┘
+                                   │
+                                   ▼
+                ┌────────────────────────────────────┐
+                │ 1) Obtain initial signal           │
+                │    Signal raw = provider.getSignal() │
+                └────────────────────────────────────┘
+                                   │
+                                   ▼
+                ┌────────────────────────────────────┐
+                │ 2) Initialize RPNStack             │
+                │    stack.push(raw)                 │
+                └────────────────────────────────────┘
+                                   │
+                                   ▼
+           ┌─────────────────────────────────────────────
+           │ 3) Ingest tokens (Signal, Constants, Ops)   │
+           └─────────────────────────────────────────────┘
+                                   │
+                                   ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ 4) RPN Execution Loop: pop(args) → apply(op) → push(result)     │
+└─────────────────────────────────────────────────────────────────┘
+                                   │
+                                   ▼
+           ┌────────────────────────────────────────────┐
+           │ 5) Final signal on top of stack            │
+           │    Signal final = (Signal) stack.peek()    │
+           └────────────────────────────────────────────┘
+                                   │
+               ┌───────────────────┼───────────────────┐
+               │                   │                   │
+               ▼                   ▼                   ▼
+┌─────────────────────┐  ┌───────────────────────┐  ┌───────────────────┐
+│ 6a) Optional Stats  │  │ 6b) Optional Features │  │ 6c) Optional NN   │
+│    if doStats=true  │  │    if doFeatures=true │  │    if doNN=true   │
+└─────────────────────┘  └───────────────────────┘  └───────────────────┘
+               │                   │                   │
+               └──────────┬────────┴───────────┬───────┘
+                          ▼                      ▼
+               ┌──────────────────┐   ┌─────────────────────┐
+               │ 7) Persist to DB │   │ 8) Plot/Visualize   │
+               └──────────────────┘   └─────────────────────┘
+                          │                      │
+                          └──────────┬───────────┘
+                                     ▼
+                        ┌──────────────────────────┐
+                        │     End of pipeline      │
+                        └──────────────────────────┘
+
+
+
+```
