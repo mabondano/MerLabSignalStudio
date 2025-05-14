@@ -67,3 +67,77 @@ MerLabSignalStudio/
 ├── pom.xml
 └── README.md
 
+## 3. Package & Class Descriptions
+
+com.merlab.signals
+- **SignalProvider (interface)**
+Defines a single method, Signal getSignal(), for any signal source.
+
+- **Signal generators**
+
+SignalGenerator: built-in waveforms (sine, square, triangle, white noise, delta).
+
+CustomSignalGenerator: manual implementations of uniform/normal with seed control.
+
+DistributionGenerator: statistical distributions (Binomial, Poisson, Exponential, Gamma, Chi-Square, etc.) via Commons-Math.
+
+- **Signal**
+Wraps a List<Double> with getters, setters and a println() helper.
+
+- **SignalStack**
+LIFO stack of Signal instances, with push(), pop(), peek(), peekSecond(), and size().
+
+- **SignalProcessor**
+Static DSP routines:
+
+Element-wise: addSignals, subtractSignals, multiplySignals, divideSignals
+
+Validation and padding (validateAndAlign)
+
+Decimation, interpolation, normalization, derivative, integrate
+
+Cooley-Tukey FFT for power-of-two lengths
+
+- **StatisticalProcessor**
+40+ methods covering:
+
+Position & dispersion (mean, variance, median, percentile)
+
+Higher-order moments (skewness, kurtosis)
+
+Waveform metrics (zero-crossings, LQR)
+
+Temporal analysis (autocorrelation)
+
+Windowed smoothing (moving average, Gaussian)
+
+Convolution, filters
+
+- **FeatureExtractor**
+Extracts domain-specific features (RMS, energy, peak detection) as Signal.
+
+- **Neural network**
+
+NeuralNetworkProcessor: inference on a Signal.
+
+NeuralNetworkManager: wraps inference for production.
+
+- **Persistence & I/O**
+
+DatabaseLoader: reads data into Signal.
+
+DatabaseManager: writes final Signal via JDBC.
+
+- **Visualization**
+SignalPlotter: XChart wrapper for plotting signals in a Swing window.
+
+- **Orchestration**
+SignalManager:
+
+Fields: provider, signalStack, databaseManager, flags (doStats, doFeatures, doNN)
+
+Methods: runPipeline(), operateRPN(), normalizeLastSignal(), statsLastSignal(), featuresLastSignal(), nnLastSignal(), saveLastSignal(), showStack(), addSignal(), getLastSignal()
+
+- **RPNOp**
+Enum of binary operations: ADD, SUBTRACT, MULTIPLY, DIVIDE.
+
