@@ -542,17 +542,6 @@ plaintext
 ```plaintext
 plaintext
 
-
-```
-
----
-
-## 12. Resumen de flujo recomendado
-
-
-```plaintext
-plaintext
-
 ┌────────────────┐
 │ Generar señales│
 └───────┬────────┘
@@ -569,7 +558,7 @@ plaintext
 
 ---
 
-## 13. Pipeline and Fluxclasses
+## 12. Pipeline and Fluxclasses
 
 
 ```plaintext
@@ -630,7 +619,7 @@ plaintext
 
 ---
 
-## 14. Pipeline and Fluxclasses
+## 13. Pipeline and Fluxclasses
 
 
 ```plaintext
@@ -678,7 +667,7 @@ plaintext
 
 ---
 
-## 15. Pipeline and SignalStack
+## 14. Pipeline and SignalStack
 
 
 ```plaintext
@@ -735,11 +724,7 @@ plaintext
 
 ---
 
-## 11. Lista completa de métodos en StatisticalProcessor
-
-
-```plaintext
-plaintext
+## 15. Lista completa de métodos en StatisticalProcessor
 
 
 1. Estadísticos básicos
@@ -799,5 +784,5 @@ weightedMovingAverage(Signal, double[] weights)
 triangularMovingAverage(Signal, int window)
 gaussianSmoothing(Signal, double sigma)
 savitzkyGolay5(Signal)
-```
+
 
