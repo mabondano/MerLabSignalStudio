@@ -66,7 +66,9 @@ MerLabSignalStudio/
 │           └── SignalProcessorFFTTest.java
 ├── pom.xml
 └── README.md
-```.
+
+```
+```
 
 ## 3. Package & Class Descriptions
 
