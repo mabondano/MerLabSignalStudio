@@ -79,58 +79,58 @@ Defines a single method, Signal getSignal(), for any signal source.
 
 - **Signal generators**
 
-SignalGenerator: built-in waveforms (sine, square, triangle, white noise, delta).
+### SignalGenerator: built-in waveforms (sine, square, triangle, white noise, delta).
 
-CustomSignalGenerator: manual implementations of uniform/normal with seed control.
+### CustomSignalGenerator: manual implementations of uniform/normal with seed control.
 
-DistributionGenerator: statistical distributions (Binomial, Poisson, Exponential, Gamma, Chi-Square, etc.) via Commons-Math.
+### DistributionGenerator: statistical distributions (Binomial, Poisson, Exponential, Gamma, Chi-Square, etc.) via Commons-Math.
 
 - **Signal**
 Wraps a List<Double> with getters, setters and a println() helper.
 
 - **SignalStack**
-LIFO stack of Signal instances, with push(), pop(), peek(), peekSecond(), and size().
+### LIFO stack of Signal instances, with push(), pop(), peek(), peekSecond(), and size().
 
 - **SignalProcessor**
 Static DSP routines:
 
-Element-wise: addSignals, subtractSignals, multiplySignals, divideSignals
+### Element-wise: addSignals, subtractSignals, multiplySignals, divideSignals
 
-Validation and padding (validateAndAlign)
+### Validation and padding (validateAndAlign)
 
-Decimation, interpolation, normalization, derivative, integrate
+### Decimation, interpolation, normalization, derivative, integrate
 
-Cooley-Tukey FFT for power-of-two lengths
+### Cooley-Tukey FFT for power-of-two lengths
 
 - **StatisticalProcessor**
 40+ methods covering:
 
-Position & dispersion (mean, variance, median, percentile)
+### Position & dispersion (mean, variance, median, percentile)
 
-Higher-order moments (skewness, kurtosis)
+### Higher-order moments (skewness, kurtosis)
 
-Waveform metrics (zero-crossings, LQR)
+### Waveform metrics (zero-crossings, LQR)
 
-Temporal analysis (autocorrelation)
+### Temporal analysis (autocorrelation)
 
-Windowed smoothing (moving average, Gaussian)
+### Windowed smoothing (moving average, Gaussian)
 
-Convolution, filters
+### Convolution, filters
 
 - **FeatureExtractor**
 Extracts domain-specific features (RMS, energy, peak detection) as Signal.
 
 - **Neural network**
 
-NeuralNetworkProcessor: inference on a Signal.
+### NeuralNetworkProcessor: inference on a Signal.
 
-NeuralNetworkManager: wraps inference for production.
+### NeuralNetworkManager: wraps inference for production.
 
 - **Persistence & I/O**
 
-DatabaseLoader: reads data into Signal.
+### DatabaseLoader: reads data into Signal.
 
-DatabaseManager: writes final Signal via JDBC.
+### DatabaseManager: writes final Signal via JDBC.
 
 - **Visualization**
 SignalPlotter: XChart wrapper for plotting signals in a Swing window.
@@ -138,9 +138,9 @@ SignalPlotter: XChart wrapper for plotting signals in a Swing window.
 - **Orchestration**
 SignalManager:
 
-Fields: provider, signalStack, databaseManager, flags (doStats, doFeatures, doNN)
+### Fields: provider, signalStack, databaseManager, flags (doStats, doFeatures, doNN)
 
-Methods: runPipeline(), operateRPN(), normalizeLastSignal(), statsLastSignal(), featuresLastSignal(), nnLastSignal(), saveLastSignal(), showStack(), addSignal(), getLastSignal()
+### Methods: runPipeline(), operateRPN(), normalizeLastSignal(), statsLastSignal(), featuresLastSignal(), nnLastSignal(), saveLastSignal(), showStack(), addSignal(), getLastSignal()
 
 - **RPNOp**
 Enum of binary operations: ADD, SUBTRACT, MULTIPLY, DIVIDE.
