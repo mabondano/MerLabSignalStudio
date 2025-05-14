@@ -151,9 +151,8 @@ Enum of binary operations: ADD, SUBTRACT, MULTIPLY, DIVIDE.
 - **Full Pipeline**
 
 ```java
-java
-Kopieren
-Bearbeiten
+*java*
+
 SignalProvider gen = new SignalGenerator();
 SignalStack stack   = new SignalStack();
 DatabaseManager db  = new DatabaseManager("jdbc:mariadb://host/db", "user", "pass");
@@ -172,8 +171,7 @@ mgr.showStack();
 - **Ad-hoc RPN Operations**
 ```java
 java
-Kopieren
-Bearbeiten
+
 mgr.addSignal(gen.getSignal());
 mgr.addSignal(gen.getSignal());
 mgr.operateRPN(RPNOp.ADD, LengthMode.PAD_WITH_ZEROS);
