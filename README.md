@@ -191,9 +191,8 @@ Dependencies in pom.xml: JUnit 5, Apache Commons-Math3, XChart
 
 2. Build & Compile
 ```
-bash
-Kopieren
-Bearbeiten
+bash                                          Kopieren
+
 mvn clean compile
 ```
 3. Run Tests
