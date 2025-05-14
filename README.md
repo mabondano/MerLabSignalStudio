@@ -189,6 +189,8 @@ mgr.saveLastSignal();
 
   * Dependencies in pom.xml: JUnit 5, Apache Commons-Math3, XChart
  ```xml
+xml
+
 <dependencies>
   <dependency>
     <groupId>org.apache.commons</groupId>
