@@ -183,11 +183,32 @@ mgr.saveLastSignal();
 ## 5. How to Compile and Test
 1. Requirements
 
-Java 17+
+  * Java 17+
 
-Maven or Gradle
+  * Maven or Gradle
 
-Dependencies in pom.xml: JUnit 5, Apache Commons-Math3, XChart
+  * Dependencies in pom.xml: JUnit 5, Apache Commons-Math3, XChart
+ ```xml
+<dependencies>
+  <dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-math3</artifactId>
+    <version>3.8.1</version>
+  </dependency>
+  <dependency>
+    <groupId>org.knowm.xchart</groupId>
+    <artifactId>xchart</artifactId>
+    <version>3.8.1</version>
+  </dependency>
+  <dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter</artifactId>
+    <version>5.9.1</version>
+    <scope>test</scope>
+  </dependency>
+</dependencies>
+
+ ```
 
 2. Build & Compile
 ```
