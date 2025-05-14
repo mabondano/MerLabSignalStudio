@@ -497,3 +497,38 @@ plaintext
 
 
 ```
+---
+
+## 10. Horizontal Pipeline Diagram
+
+
+```plaintext
+plaintext
+
+[Start]
+   ↓
+[getSignal()]
+   ↓
+[stack.push(raw)]
+   ↓
+[Ingest tokens (Signal ⏎ Constants ⏎ Operations)]
+   ↓
+[RPN loop: pop(args) → apply(op) → push(result)]
+   ↓
+[Final signal = stack.peek()]
+   ↓
+--- Optionals ------------------------------------------------------
+   ├─ (doStats?       → extractStats()    → push(stats)    )
+   ├─ (doFeatures?    → extractFeatures() → push(features) )
+   └─ (doNN?          → predict()         → push(nnResult) )
+--------------------------------------------------------------------
+   ↓
+[saveSignal(final)]
+   ↓
+[plotSignal(final)]
+   ↓
+[End]
+
+
+
+```
