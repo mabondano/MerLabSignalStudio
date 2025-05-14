@@ -32,7 +32,7 @@ MerLabSignalStudio is ideal for signal processing engineers, data scientists and
 
 A typical Maven-style layout:
 
-```.
+```
 MerLabSignalStudio/
 ├── src/
 │   ├── main/
@@ -66,7 +66,7 @@ MerLabSignalStudio/
 │           └── SignalProcessorFFTTest.java
 ├── pom.xml
 └── README.md
-```plaintext
+```.
 
 ## 3. Package & Class Descriptions
 
