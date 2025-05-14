@@ -214,18 +214,18 @@ mvn package
 ## 6. Extension & Customization
 - **New RPN operations**
 
-Add enum in RPNOp or implement RPNOperation interface.
+1. Add enum in RPNOp or implement RPNOperation interface.
 
-Write logic in SignalProcessor or a new Operation class.
+2. Write logic in SignalProcessor or a new Operation class.
 
-Update SignalManager.operateRPN() or use a generic RPNEngine.
+3. Update SignalManager.operateRPN() or use a generic RPNEngine.
 
 - **Custom generators**
 Extend AbstractSignalGenerator for new synthetic or data-driven sources.
 
 - **Machine Learning**
-– Inference: wrap models in NeuralNetworkProcessor.
-– Training: separate MerLabModelTrainer project reading processed signals.
+  * Inference: wrap models in NeuralNetworkProcessor.
+  * Training: separate MerLabModelTrainer project reading processed signals.
 
 - **Persistence**
 Swap out or extend DatabaseManager for other SQL dialects or NoSQL backends.
