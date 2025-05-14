@@ -148,7 +148,9 @@ Enum of binary operations: ADD, SUBTRACT, MULTIPLY, DIVIDE.
 ---
 
 ## 4. Usage Flow / Examples
-Full Pipeline
+- **Full Pipeline**
+
+```java
 java
 Kopieren
 Bearbeiten
@@ -165,7 +167,10 @@ SignalManager mgr = new SignalManager(
 
 mgr.runPipeline();
 mgr.showStack();
-Ad-hoc RPN Operations
+```
+
+- **Ad-hoc RPN Operations**
+```java
 java
 Kopieren
 Bearbeiten
@@ -174,6 +179,7 @@ mgr.addSignal(gen.getSignal());
 mgr.operateRPN(RPNOp.ADD, LengthMode.PAD_WITH_ZEROS);
 mgr.normalizeLastSignal();
 mgr.saveLastSignal();
+```
 ---
 
 ## 5. How to Compile and Test
