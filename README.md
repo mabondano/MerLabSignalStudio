@@ -79,7 +79,7 @@ Defines a single method, Signal getSignal(), for any signal source.
 
 - **Signal generators**
 
-- ### SignalGenerator: built-in waveforms (sine, square, triangle, white noise, delta).
+- *** SignalGenerator: built-in waveforms (sine, square, triangle, white noise, delta).
 
 ### CustomSignalGenerator: manual implementations of uniform/normal with seed control.
 
