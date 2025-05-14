@@ -532,3 +532,272 @@ plaintext
 
 
 ```
+
+
+---
+
+## 11. Resumen de flujo recomendado
+
+
+```plaintext
+plaintext
+
+
+```
+
+---
+
+## 12. Resumen de flujo recomendado
+
+
+```plaintext
+plaintext
+
+┌────────────────┐
+│ Generar señales│
+└───────┬────────┘
+        │ addSignal(...) ──► List<Signal> stack 
+┌───────┴────────┐
+│ Procesar stack │  validate lengths, calcular operaciones
+└───────┬────────┘
+        │ process(stack) ──► Signal finalSignal
+┌───────┴────────┐
+│ Guardar resultado │  databaseManager.saveSignal(finalSignal)
+└────────────────┘
+
+```
+
+---
+
+## 13. Pipeline and Fluxclasses
+
+
+```plaintext
+plaintext
+
+                          +----------------+
+                          |  SignalProvider|
+                          | (interface)    |
+                          +-------+--------+
+                                  |
+             +--------------------+--------------------+
+             |                                         |
++------------v------------+               +------------v------------+
+| DatabaseLoader          |               | SignalGenerator        |
+| implements SignalProvider|               | implements SignalProvider|
++------------+------------+               +------------+------------+
+             |                                         |
+             +--------------------+--------------------+
+                                  |
+                          +-------v--------+
+                          | SignalManager  |
+                          +-------+--------+
+                                  |
+               +------------------+------------------+
+               |                                     |
+       +-------v-------+                     +-------v-------+
+       | DataLoader    |                     | DatabaseManager|
+       | (optional)    |                     |  (saveSignal) |
+       +-------+-------+                     +---------------+
+               |
+               v
+       +-------+-------+
+       | SignalProcessor|
+       +-------+-------+
+               |
+       +-------v-------+
+       | Statistical   |
+       | Processor     |
+       +-------+-------+
+               |
+       +-------v-------+
+       | Feature       |
+       | Extractor     |
+       +-------+-------+
+               |
+       +-------v-------+
+       | NeuralNetwork |
+       | Processor     |
+       +-------+-------+
+               |
+               v
+       +-------+-------+
+       | DatabaseManager|
+       | (saveSignal)   |
+       +---------------+
+
+```
+
+---
+
+## 14. Pipeline and Fluxclasses
+
+
+```plaintext
+plaintext
+
+                       +----------------+
+                       | SignalProvider |
+                       +--------+-------+
+                                |
+                                v
+                       +--------+-------+
+                       | SignalManager  |
+                       +--------+-------+
+                                |
+                                v
+                       +--------+-------+
+                       | SignalProcessor|   ← siempre aplicado
+                       +--------+-------+
+                                |
+                                v
+                       +--------+-------+
+                       | Statistical    |   ← OPCIONAL según operación
+                       | Processor      |
+                       +--------+-------+
+                                |
+                                v
+                       +--------+-------+
+                       | Feature        |   ← OPCIONAL según operación
+                       | Extractor      |
+                       +--------+-------+
+                                |
+                                v
+                       +--------+-------+
+                       | NeuralNetwork  |   ← OPCIONAL según operación
+                       | Processor      |
+                       +--------+-------+
+                                |
+                                v
+                       +--------+-------+
+                       |DatabaseManager |
+                       |  saveResult()  |   ← guarda la **última** señal obtenida
+                       +----------------+
+
+```
+
+---
+
+## 15. Pipeline and SignalStack
+
+
+```plaintext
+plaintext
+
+                       +----------------+
+                       | SignalProvider |  ← DatabaseLoader o SignalGenerator
+                       +--------+-------+
+                                |
+                                v
+                       +--------+-------+
+                       | SignalManager  |  ← orquesta todo
+                       +--------+-------+
+                                |
+                                v
+                       +--------+-------+
+                       | SignalStack    |  ← aquí se “push” la señal inicial
+                       +--------+-------+
+                                |
+                                v
+                       +--------+-------+
+                       | SignalProcessor|  ← siempre consume stack.peek() y empuja resultado
+                       +--------+-------+
+                                |
+                                v
+                       +--------+-------+
+                       | Statistical    |  ← OPCIONAL, idem: consume y empuja
+                       | Processor      |
+                       +--------+-------+
+                                |
+                                v
+                       +--------+-------+
+                       | Feature        |  ← OPCIONAL
+                       | Extractor      |
+                       +--------+-------+
+                                |
+                                v
+                       +--------+-------+
+                       | NeuralNetwork  |  ← OPCIONAL
+                       | Processor      |
+                       +--------+-------+
+                                |
+                                v
+                       +--------+-------+
+                       | SignalStack    |  ← la “señal final” está en stack.peek()
+                       +--------+-------+
+                                |
+                                v
+                       +--------+-------+
+                       |DatabaseManager |  ← guarda stack.peek() en BD
+                       +----------------+
+
+```
+
+---
+
+## 11. Lista completa de métodos en StatisticalProcessor
+
+
+```plaintext
+plaintext
+
+
+1. Estadísticos básicos
+count(Signal)
+sum(Signal)
+mean(Signal)
+variance(Signal)
+stdDev(Signal)
+min(Signal)
+max(Signal)
+range(Signal)
+median(Signal)
+percentile(Signal, double p)
+sumOfSquares(Signal)
+rms(Signal)
+skewness(Signal)
+kurtosis(Signal)
+extractStats(Signal) (devuelve Signal con [media, varianza])
+
+2. Posición y dispersión adicionales
+mode(Signal)
+iqr(Signal)
+coefficientOfVariation(Signal)
+standardError(Signal)
+meanAbsoluteDeviation(Signal)
+medianAbsoluteDeviation(Signal)
+energy(Signal) (alias de sumOfSquares)
+entropy(Signal)
+
+3. Momentos de orden superior
+thirdCentralMoment(Signal)
+fourthCentralMoment(Signal)
+
+4. Forma de onda
+peakToPeak(Signal)
+crestFactor(Signal)
+impulseFactor(Signal)
+shapeFactor(Signal)
+clearanceFactor(Signal)
+marginFactor(Signal)
+zeroCrossingRate(Signal)
+
+5. Series temporales y correlación
+autocorrelation(Signal, int lag)
+autocorrelations(Signal, int maxLag)
+partialAutocorrelation(Signal, int p)
+crossCorrelation(Signal x, Signal y, int lag)
+
+6. Ventanas móviles y suavizado
+movingAverage(Signal, int window)
+exponentialMovingAverage(Signal, double alpha)
+movingStdDev(Signal, int window)
+
+7. Ventanas móviles avanzadas
+movingMedian(Signal, int window)
+weightedMovingAverage(Signal, double[] weights)
+triangularMovingAverage(Signal, int window)
+gaussianSmoothing(Signal, double sigma)
+savitzkyGolay5(Signal)
+```
+
