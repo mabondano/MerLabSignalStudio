@@ -79,11 +79,11 @@ Defines a single method, Signal getSignal(), for any signal source.
 
 - **Signal generators**
 
-- ***SignalGenerator: built-in waveforms (sine, square, triangle, white noise, delta).***
+  ***SignalGenerator: built-in waveforms (sine, square, triangle, white noise, delta).
 
-   ### CustomSignalGenerator: manual implementations of uniform/normal with seed control.### 
+  ***CustomSignalGenerator: manual implementations of uniform/normal with seed control.
 
-### DistributionGenerator: statistical distributions (Binomial, Poisson, Exponential, Gamma, Chi-Square, etc.) via Commons-Math.
+  ***DistributionGenerator: statistical distributions (Binomial, Poisson, Exponential, Gamma, Chi-Square, etc.) via Commons-Math.
 
 - **Signal**
 Wraps a List<Double> with getters, setters and a println() helper.
