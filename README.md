@@ -32,7 +32,7 @@ MerLabSignalStudio is ideal for signal processing engineers, data scientists and
 
 A typical Maven-style layout:
 
-```plaintext
+```.
 MerLabSignalStudio/
 ├── src/
 │   ├── main/
