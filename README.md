@@ -151,7 +151,7 @@ Enum of binary operations: ADD, SUBTRACT, MULTIPLY, DIVIDE.
 - **Full Pipeline**
 
 ```java
-*java*
+java
 
 SignalProvider gen = new SignalGenerator();
 SignalStack stack   = new SignalStack();
@@ -181,7 +181,7 @@ mgr.saveLastSignal();
 ---
 
 ## 5. How to Compile and Test
-Requirements
+1. Requirements
 
 Java 17+
 
@@ -189,29 +189,30 @@ Maven or Gradle
 
 Dependencies in pom.xml: JUnit 5, Apache Commons-Math3, XChart
 
-Build & Compile
-
+2. Build & Compile
+```
 bash
 Kopieren
 Bearbeiten
 mvn clean compile
-Run Tests
-
+```
+3. Run Tests
+```
 bash
-Kopieren
-Bearbeiten
+
 mvn test
-Package JAR
-
+```
+4. Package JAR
+```
 bash
-Kopieren
-Bearbeiten
+
 mvn package
 # target/MerLabSignalStudio-1.0.jar
+```
 ---
 
 ## 6. Extension & Customization
-New RPN operations
+- **New RPN operations**
 
 Add enum in RPNOp or implement RPNOperation interface.
 
@@ -219,14 +220,14 @@ Write logic in SignalProcessor or a new Operation class.
 
 Update SignalManager.operateRPN() or use a generic RPNEngine.
 
-Custom generators
+- **Custom generators**
 Extend AbstractSignalGenerator for new synthetic or data-driven sources.
 
-Machine Learning
+- **Machine Learning**
 – Inference: wrap models in NeuralNetworkProcessor.
 – Training: separate MerLabModelTrainer project reading processed signals.
 
-Persistence
+- **Persistence**
 Swap out or extend DatabaseManager for other SQL dialects or NoSQL backends.
 
 With this structure and guidance, MerLabSignalStudio can be tailored to any time-series or tabular data pipeline, from DSP prototyping to full AI analytics services.
