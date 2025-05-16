@@ -786,3 +786,245 @@ gaussianSmoothing(Signal, double sigma)
 savitzkyGolay5(Signal)
 
 
+
+
+
+
+
+### Generic RPN Engine
+MerLabSignalStudio includes a generic, extensible Reverse Polish Notation (RPN) engine that allows you to build complex signal processing pipelines by chaining operations in postfix style. This design supports unary, binary, and n-ary operations and can be extended dynamically.
+
+RPN Flow Diagram (Plaintext)
+sql
+Kopieren
+Bearbeiten
+   +------------------+
+   | Input Expression |
+   | "A 2 dec norm B +" |
+   +------------------+
+            |
+            v
+   +---------------------+
+   | RPNParser (tokenize)|
+   +---------------------+
+            |
+            v
+   +-------------------+
+   |   RPNEngine       |
+   | (dispatch tokens) |
+   +-------------------+
+            |
+            v
+   +---------------------+
+   |   RPNStack          |
+   | (operands/results)  |
+   +---------------------+
+            |
+            v
+   +---------------------+
+   | Operation Registry  |
+   | (Add, Dec, Norm,...)|
+   +---------------------+
+            |
+            v
+   +--------------------+
+   |   Final Result     |
+   +--------------------+
+Token Pipeline Example
+sql
+Kopieren
+Bearbeiten
+Tokens:      "A 2 dec norm B +"
+Pipeline:    [Push A] → [Push 2] → [Decimate] → [Normalize] → [Push B] → [Add]
+Example RPN Usage (Java)
+src/main/java/com/merlab/signals/examples/ExampleRPNUsage.java
+java
+Kopieren
+Bearbeiten
+import com.merlab.signals.*;
+import com.merlab.signals.rpn.*;
+
+import java.util.*;
+
+public class ExampleRPNUsage {
+    public static void main(String[] args) {
+        // Setup basic signals
+        Map<String, Signal> vars = new HashMap<>();
+        vars.put("A", new Signal(List.of(1.0, 2.0, 3.0)));
+        vars.put("B", new Signal(List.of(4.0, 5.0, 6.0)));
+
+        // Setup engine with standard operations
+        RPNEngine engine = TestUtil.createEngineWithBasicOps();
+        RPNParser parser = new RPNParser(engine);
+        RPNStack stack = new RPNStack();
+
+        // Example: decimate A by 2, normalize, add B
+        parser.parseAndExecute("A 2 dec norm B +", vars, stack);
+
+        Signal result = (Signal) stack.peek();
+        System.out.println("Result: " + result.getValues()); // Output: [4.0, 6.0, 6.0]
+    }
+}
+This example decimates A by 2, normalizes it, then adds B using RPN.
+
+### Testing
+This project uses standard JUnit 5 tests located in:
+
+swift
+Kopieren
+Bearbeiten
+src/test/java/com/merlab/rpn/test/
+Test classes include:
+
+RPNStackTest.java
+
+AddOpTest.java
+
+DecimateOpTest.java
+
+RPNEngineTest.java
+
+RPNParserTest.java
+
+(plus many more for each operation)
+
+How to run only RPN tests
+If you use Maven, you can run all tests in this package with:
+
+sh
+Kopieren
+Bearbeiten
+mvn -Dtest=com.merlab.rpn.test.* test
+Or simply run the corresponding test class from your IDE.
+
+module-info.java
+By default, the test packages are not exported. If you need code coverage tools or white-box testing, export the relevant test package:
+
+java
+Kopieren
+Bearbeiten
+open module MerLabSignalStudio {
+    // ... (other exports)
+    exports com.merlab.rpn.test to org.junit.platform.launcher;
+}
+(Optional: only if your tool requires it)
+
+Summary Table
+Section	Description
+RPN Engine	Extensible, supports arbitrary ops, postfix style
+Example Usage	ExampleRPNUsage.java in src/main/java/com/merlab/signals/examples
+RPN Test Structure	All core RPN unit tests in src/test/java/com/merlab/rpn/test/
+Running Tests	Use Maven or IDE, filter by package/class
+Extending RPN	Register your own ops via engine.register("myop", new MyOp())
+
+¿Quieres el ejemplo de plot y save también en esta sección, o solo te enfocas por ahora en la documentación RPN? Si necesitas el bloque extra, dímelo y lo integro también al README.
+
+
+
+
+
+
+Du:
+si plot y save (plot como herramienta de desarrollo de apollo visual) y save por ahora salvando en una tabla. Mas adelante veremos el formato de la tabla
+
+
+ChatGPT:
+¡Perfecto Merly! Aquí tienes el bloque ampliado para tu README.md sobre las operaciones plot y save, presentando plot como herramienta visual y save como persistencia a tabla (básica). Todo está en inglés y listo para copiar/pegar, con diagramas y ejemplos de código.
+
+### Plot and Save Operations
+MerLabSignalStudio includes development and workflow utilities like plot (for visualizing signals during pipeline development) and save (to persist results for later analysis).
+
+Flow Diagram with Plot & Save (Plaintext)
+pgsql
+Kopieren
+Bearbeiten
+   +-----------+          +---------+           +-------------+
+   |   Signal  |   --->   |  RPN    |   --->    |   Result    |
+   |  Pipeline |   --->   | Engine  |   --->    | (Signal, ...)|
+   +-----------+          +---------+           +-------------+
+          |                     |                    |
+          v                     |                    v
+      [plot]                [other ops]           [save]
+          |                                         |
+   [Visualization]                             [Database/Table]
+Example: Plotting and Saving Signals with RPN
+java
+Kopieren
+Bearbeiten
+import com.merlab.signals.*;
+import com.merlab.signals.rpn.*;
+import java.util.*;
+
+public class PlotAndSaveExample {
+    public static void main(String[] args) {
+        // Prepare signals and environment
+        Signal sig = new Signal(List.of(1.0, 2.0, 3.0));
+        DatabaseManager db = new DatabaseManager("jdbc:mariadb://localhost:3306/test", "root", "root");
+
+        RPNEngine engine = TestUtil.createEngineWithBasicOps();
+        engine.register("plot", new PlotOp()); // Your PlotOp implementation
+        engine.register("save", new SaveOp()); // Your SaveOp implementation
+
+        RPNStack stack = new RPNStack();
+
+        // Plot: stack.push(label), stack.push(signal), engine.execute("plot", stack)
+        stack.push("Test Signal");
+        stack.push(sig);
+        engine.execute("plot", stack); // Simulates visual plot, returns the signal
+
+        // Save: stack.push(db), stack.push(signal), engine.execute("save", stack)
+        stack.push(db);
+        stack.push(sig);
+        engine.execute("save", stack); // Simulates saving to DB, returns the signal
+
+        System.out.println("Plotted and saved successfully!");
+    }
+}
+Plot: Displays the signal visually (stub for now, can use JavaFX, Plotly, etc.).
+
+Save: Saves the signal to the database (here, table/format is a placeholder—can be defined later).
+
+RPN Expression Example Including Plot and Save
+css
+Kopieren
+Bearbeiten
+A "Test Signal" plot B + db save
+This pipeline pushes signal A, plots it with the label, adds B, and saves the result to the database.
+
+Block for README
+markdown
+Kopieren
+Bearbeiten
+### Plot and Save in the RPN Pipeline
+
+The RPN engine supports direct invocation of workflow helpers for development, debugging, and integration.
+
+#### **Plotting a Signal**
+- Usage: Push a label and a Signal onto the stack, then apply the `plot` operation.
+- Purpose: To quickly visualize signals at any pipeline stage during development.
+
+#### **Saving a Signal**
+- Usage: Push a DatabaseManager and a Signal onto the stack, then apply the `save` operation.
+- Purpose: To persist processed signals/results for later retrieval or analysis.
+
+**Example:**
+
+```java
+stack.push("Signal label");   // String label
+stack.push(signal);           // Signal object
+engine.execute("plot", stack);  // Visualizes the signal
+
+stack.push(dbManager);        // DatabaseManager instance
+stack.push(signal);           // Signal object
+engine.execute("save", stack);  // Saves to database
+```
+
+*You can chain these in RPN expressions:*
+
+```
+A "Test Signal" plot B + db save
+```
+---
+
+**Note:** The actual table/format used for `save` can be customized as your project evolves.
+¿Listo para agrega
